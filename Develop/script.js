@@ -3,57 +3,64 @@
 // in the html.
 
 $( document ).ready(function() {
-  
- 
   //parse the input values into an array
-var list = JSON.parse(localStorage.getItem('inputText')) || [];
+
 var inputText = document.getElementsByClassName('description').val;
+var list = JSON.parse(localStorage.getItem('inputText')) || [];
 // the current date in the header of the page.
 let pDate = dayjs().format('MMM D, YYYY');
   $('#currentDay').text(pDate);
 //working current hour
-  let cHour =  new Date().getHours();
-  console.log('cHour: ' + cHour);
-   
-console.log(inputText);
+let cHour = new Date().getHours();
+console.log('cHour: ' + cHour);
 
+console.log('inputtext'+ inputText);
 
+let hourIds = $('div.row.time-block').map(function() {
+  let hourid3 = $(this).attr('id');
+  return parseInt(hourid3.split('-')[1]);
+}).get();
+for (i = 0; i < hourIds.length; i++) {
+  console.log(hourIds[i]);
 
-  // TODO: Add a listener for click events on the save bu
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
+  if (hourIds[i] === cHour) {
+    $('div.row.time-block').eq(i).addClass('present');
+    console.log(hourIds[i], cHour);
+  } else if (hourIds[i] >= cHour) {
+    $('div.row.time-block').eq(i).addClass('future');
+  } else {
+    $('div.row.time-block').eq(i).addClass('past');
+  }
+}
+  
+  console.log(hourIds);
+  $('.saveBtn').on('click', function() {
+    let currentIndex = $('.saveBtn').index(this);
+    let currentHourId = $('div.row.time-block').eq(currentIndex).attr('id');
+    let textareaValue = $('div.row.time-block').eq(currentIndex).find('textarea').val();
+  
+    console.log('currentHourId: ' + currentHourId);
+    console.log('textareaValue: ' + textareaValue);
+    //got the hour from calendar
+    let info = {
+      hourId: currentHourId,
+      textareaValue: textareaValue,
+    }
+    localStorage.setItem('info', JSON.stringify(info));
+  });
+  
+  let infoBack = JSON.parse(localStorage.getItem('info'));
+  console.log('infoBack:' + JSON.stringify(infoBack));
+  
+  let storedHourId = infoBack.hourId;
+  let storedTextareaValue = infoBack.textareaValue;
+  
+  let storedHourIndex = $('div.row.time-block').map(function() {
+    let hourid3 = $(this).attr('id');
+    return parseInt(hourid3.split('-')[1]);
+  }).get().indexOf(storedHourId.split('-')[1]);
+  
+  $('div.row.time-block').eq(storedHourIndex).find('textarea').val(storedTextareaValue);
+  
   //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  //use below code to save to local storage
-  //if(inputText.val())
-//{
-    //creating the object for to store it in localStore
-   // var objWorkSchedule ={
-    //    txtSch: inputText.val().trim(),
-     //   hourSch: cHour
-   // };
-
-    //pushing the information into the array of objects
-    //list.push(objWorkSchedule);
-
-   // localStorage.setItem("daySch",JSON.stringify(list));
-//}
-//else
-//{
-   // alert("You can not save and empty event \n You must enter and event");
-//}
-  //
- })
-
+})
