@@ -4,18 +4,18 @@
 
 $( document ).ready(function() {
   
- // the current date in the header of the page.
-  
-var list = JSON.parse(localStorage.getItem('daySch')) || [];
-var inputText = document.getElementsByClassName('description');
-
+ 
+  //parse the input values into an array
+var list = JSON.parse(localStorage.getItem('inputText')) || [];
+var inputText = document.getElementsByClassName('description').val;
+// the current date in the header of the page.
 let pDate = dayjs().format('MMM D, YYYY');
   $('#currentDay').text(pDate);
 //working current hour
   let cHour =  new Date().getHours();
   console.log('cHour: ' + cHour);
    
-console.log(inputText.val);
+console.log(inputText);
 
 
 
